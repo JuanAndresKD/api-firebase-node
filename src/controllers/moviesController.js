@@ -5,6 +5,10 @@ const { v4: uuidv4 } = require('uuid');
 exports.agregarPelicula = async (req, res) => {
     const { nombre, descripcion, url, imagen } = req.body;
 
+    if (!nombre || !descripcion || !url || !imagen) {
+        return res.status(400).json({ error: 'Todos los campos son obligatorios.' });
+    }
+    
     try {
         const peliculaId = uuidv4(); // Generar un ID único para la película
         const db = admin;

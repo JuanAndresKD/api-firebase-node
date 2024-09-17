@@ -30,6 +30,9 @@ exports.listEpisodes = async (req, res) => {
         const snapshot = await db.ref(`series/${serieId}/temporadas/${temporadaId}/episodes`).once('value');
         const episodes = snapshot.val();
 
+        // Convertir el objeto de capítulos en un array
+        const episodesArray = Object.keys(episodes).map(key => ({ id: key, ...episodes[key] }));
+
         res.status(200).json(episodes);
     } catch (error) {
         res.status(500).json({ error: error.message });

@@ -9,7 +9,7 @@ exports.addSeason = async (req, res) => {
     try {
         const SeasonId = uuidv4(); // Generar un ID único para la Season
         const db = admin.database();
-        await db.ref(`series/${serieId}/Seasons/${SeasonId}`).set({
+        await db.ref(`series/${serieId}/seasons/${SeasonId}`).set({
             nombre,
             imagen,
         });
@@ -26,8 +26,13 @@ exports.listSeasons = async (req, res) => {
 
     try {
         const db = admin.database();
-        const snapshot = await db.ref(`series/${serieId}/Seasons`).once('value');
-        const Seasons = snapshot.val();
+        const snapshot = await db.ref(`series/${serieId}/seasons`).once('value');
+        const seasons = snapshot.val();
+        if (!seasons) {
+            return res.status(200).json([]); // Retornar un array vacío si no hay seasons
+        }
+        
+        const seasonsArray = Object.keys(seasons).map(key => ({ id: key, ...seasons[key] }));
 
         res.status(200).json(Seasons);
     } catch (error) {
@@ -37,12 +42,12 @@ exports.listSeasons = async (req, res) => {
 
 // Modificar una Season existente
 exports.updateSeason = async (req, res) => {
-    const { serieId, SeasonId } = req.params;
+    const { serieId, seasonId } = req.params;
     const { nombre, imagen } = req.body;
 
     try {
         const db = admin.database();
-        await db.ref(`series/${serieId}/Seasons/${SeasonId}`).update({
+        await db.ref(`series/${serieId}/seasons/${SeasonId}`).update({
             nombre,
             imagen,
         });

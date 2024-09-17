@@ -35,6 +35,10 @@ exports.signUpUsers = async (req, res) => {
 
 exports.signInUsers = async (req, res) => {
   try {
+
+    const { email, password } = req.body;
+    const userRecord = await admin.auth().getUserByEmail(email);
+
     const userRef = database.ref("users");
     const snapshot = await userRef.orderByChild("email").equalTo(req.body.email).once("value");
 
